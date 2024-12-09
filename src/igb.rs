@@ -1,9 +1,16 @@
-use core::ptr::NonNull;
+use axdriver_net::DevResult;
 
-pub struct Igb {}
+const RECV_BATCH_SIZE: usize = 64;
+const RX_BUFFER_SIZE: usize = 1024;
+const MEM_POOL: usize = 4096;
+const MEM_POOL_ENTRY_SIZE: usize = 2048;
 
-impl Igb {
-    pub fn new(bar0: NonNull<u8>) -> Self {
-        Self {}
+pub struct IgbDevice {}
+
+impl IgbDevice {
+    /// Creates a net igb NIC instance and initialize, or returns a error if
+    /// any step fails.
+    pub fn init(base: usize, len: usize) -> DevResult<Self> {
+        Ok(Self {})
     }
 }

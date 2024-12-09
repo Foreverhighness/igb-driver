@@ -7,7 +7,7 @@
 extern crate alloc;
 
 use bare_test::{driver::device_tree::get_device_tree, fdt::PciSpace, mem::mmu::iomap, println};
-use igb_driver::Igb;
+use igb_driver::IgbDevice;
 use log::{debug, info};
 use pcie::*;
 
@@ -26,7 +26,7 @@ fn test_uart() {
     debug!("igb start");
 }
 
-fn get_igb() -> Igb {
+fn get_igb() -> IgbDevice {
     let fdt = get_device_tree().unwrap();
     let pcie = fdt
         .find_compatible(&["pci-host-ecam-generic"])
@@ -93,7 +93,7 @@ fn get_igb() -> Igb {
 
                 let addr = iomap(bar_addr.into(), bar_size);
 
-                let igb = Igb::new(addr);
+                let igb = IgbDevice::new(addr);
                 return igb;
             }
         }
