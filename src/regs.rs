@@ -9,6 +9,9 @@ use crate::{err::IgbError, sleep};
 pub const EIMS: u32 = 0x01524;
 pub const EIMC: u32 = 0x01528;
 pub const EICR: u32 = 0x01580;
+pub const RXPBS: u32 = 0x02404;
+pub const TXPBS: u32 = 0x03404;
+pub const SWPBS: u32 = 0x03004;
 
 #[derive(Clone, Copy)]
 pub struct Reg {
@@ -65,6 +68,8 @@ impl Reg {
 
     /// Disable all interrupts for all queues.
     pub fn disable_interrupts(&self) {
+        log::debug!("Disable interrupts");
+
         // Clear interrupt mask to stop from interrupts being generated
         self.write_32(EIMS, 0);
         self.clear_interrupts();

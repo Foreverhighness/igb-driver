@@ -15,10 +15,10 @@ pub struct Phy {
 
 impl Phy {
     pub fn new(reg: Reg) -> Self {
-        // let mdic = reg.read_reg::<MDIC>();
-        // let addr = (mdic.bits() & MDIC::PHYADD.bits()) >> 21;
-        // debug!("phy addr: {}", addr);
-        Self { reg, addr: 1 }
+        let mdic = reg.read_reg::<MDIC>();
+        let addr = (mdic.bits() & MDIC::PHYADD.bits()) >> 21;
+        debug!("phy addr: {}", addr);
+        Self { reg, addr }
     }
 
     pub fn read_mdic(&self, offset: u32) -> Result<u16, IgbError> {
