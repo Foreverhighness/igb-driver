@@ -3,11 +3,7 @@ const RX_BUFFER_SIZE: usize = 1024;
 const MEM_POOL: usize = 4096;
 const MEM_POOL_ENTRY_SIZE: usize = 2048;
 
-pub struct IgbDevice {}
-
 use core::{ptr::NonNull, time::Duration};
-
-use log::debug;
 
 use crate::{
     descriptor::{AdvRxDesc, AdvTxDesc},
@@ -17,14 +13,17 @@ use crate::{
     ring::{Ring, DEFAULT_RING_SIZE},
 };
 
-pub struct Igb {
+pub struct IgbDevice {
     reg: Reg,
     tx_ring: Ring<AdvTxDesc>,
     rx_ring: Ring<AdvRxDesc>,
     phy: Phy,
 }
 
-impl Igb {
+unsafe impl Send for IgbDevice {}
+unsafe impl Sync for IgbDevice {}
+
+impl IgbDevice {
     pub fn new(bar0: NonNull<u8>) -> Result<Self, IgbError> {
         let reg = Reg::new(bar0);
         let tx_ring = Ring::new(reg, DEFAULT_RING_SIZE)?;

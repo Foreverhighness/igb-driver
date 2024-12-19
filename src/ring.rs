@@ -17,8 +17,5 @@ impl<D: Descriptor> Ring<D> {
         Ok(Self { descriptors, reg })
     }
 
-
-    pub fn init(&mut self){
-        
-    }
+    pub fn init(&mut self) {}
 }
