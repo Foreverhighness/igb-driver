@@ -301,3 +301,34 @@ bitflags! {
 impl FlagReg for TXDCTL {
     const REG: u32 = 0x0E028;
 }
+
+bitflags! {
+    pub struct IMS: u32 {
+        const TXDW          = 1;
+        const LSC           = 1 <<  2;
+        const RXSEQ         = 1 <<  3;
+        const RXDMT0        = 1 <<  4;
+        const MACSec        = 1 <<  5;
+        const RXO           = 1 <<  6;
+        const RXDW          = 1 <<  7;
+        const VMMB          = 1 <<  8;
+        const GPI_SDP0      = 1 << 11;
+        const GPI_SDP1      = 1 << 12;
+        const GPI_SDP2      = 1 << 13;
+        const GPI_SDP3      = 1 << 14;
+        const PTRAP         = 1 << 15;
+        const MNG           = 1 << 18;
+        const OMED          = 1 << 20;
+        const FER           = 1 << 22;
+        const NFER          = 1 << 23;
+        const CSRTO         = 1 << 24;
+        const SEC           = 1 << 25;
+        const SoftwareWD    = 1 << 26;
+        const OUTSYNC       = 1 << 28;
+        const TCPtimer      = 1 << 30;
+    }
+}
+
+impl FlagReg for IMS {
+    const REG: u32 = 0x01508;
+}

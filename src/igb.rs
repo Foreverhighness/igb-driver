@@ -2,7 +2,7 @@ use crate::{
     descriptor::{AdvRxDesc, AdvTxDesc},
     err::IgbError,
     phy::Phy,
-    regs::{Reg, CTRL, CTRL_EXT, RCTL, RXPBS, STATUS, SWPBS, TCTL, TXPBS},
+    regs::{Reg, CTRL, CTRL_EXT, IMS, RCTL, RXPBS, STATUS, SWPBS, TCTL, TXPBS},
     ring::{Ring, DEFAULT_RING_SIZE},
 };
 use core::{ptr::NonNull, time::Duration};
@@ -121,7 +121,8 @@ impl IgbDevice {
     }
 
     fn enable_interrupts(&self) {
-        //TODO
+        self.reg
+            .write_reg(IMS::RXDW | IMS::TXDW | IMS::RXDMT0 | IMS::LSC | IMS::RXSEQ);
     }
 
     pub fn status(&self) -> IgbStatus {
