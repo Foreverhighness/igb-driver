@@ -50,14 +50,14 @@ impl Reg {
         self.write_reg(f(old));
     }
 
-    pub fn wait_for<R: FlagReg, F: Fn(R) -> bool>(
+    pub fn wait_for<R: FlagReg, F: Fn(R) -> Result<bool, IgbError>>(
         &self,
         f: F,
         interval: Duration,
         try_count: Option<usize>,
     ) -> Result<(), IgbError> {
         for _ in 0..try_count.unwrap_or(usize::MAX) {
-            if f(self.read_reg::<R>()) {
+            if f(self.read_reg::<R>())? {
                 return Ok(());
             }
 
@@ -232,6 +232,7 @@ impl FlagReg for TCTL {
 }
 
 bitflags! {
+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     pub struct MDIC: u32 {
         const DATA = 0xFFFF;
         const REGADD = 0b11111 << 16;

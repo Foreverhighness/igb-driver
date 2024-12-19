@@ -40,11 +40,30 @@ impl IgbDevice {
 
     // 4.5.3
     pub fn open(&mut self) -> Result<()> {
+        // 4.5.4 Interrupts During Initialization
+        self.reg.disable_interrupts();
+        self.reg.write_reg(CTRL::RST);
+        self.reg.wait_for(
+            |reg: CTRL| Ok(!reg.contains(CTRL::RST)),
+            Duration::from_millis(1),
+            Some(1000),
+        )?;
+        // 4.5.4 disable interrupts again after reset
         self.reg.disable_interrupts();
 
+        self.reg
+            .modify_reg(|reg: CTRL_EXT| CTRL_EXT::DRV_LOAD | reg);
+
+        log::info!("Mac address: {:02X?}", self.reg.read_mac());
+
+        // 4.5.5 Global Reset and General Configuration
         self.global_reset_and_general_configuration()?;
 
+        // 4.5.6 Flow Control Setup (skipped)
+        // 4.5.7 Link Setup Mechanisms and Control/Status Bit Summary
         self.setup_phy_and_the_link()?;
+
+        log::info!("status: {:?}", self.status());
 
         self.init_stat();
 
@@ -127,13 +146,6 @@ impl IgbDevice {
         log::debug!("Global Reset and General Configuration");
 
         log::trace!("Set rst with 1, and ILOS with 0");
-        self.reg.write_reg(CTRL::RST);
-
-        self.reg.wait_for(
-            |reg: CTRL| !reg.contains(CTRL::RST),
-            Duration::from_millis(1),
-            Some(1000),
-        )?;
 
         log::trace!(
             "Set the packet buffer allocation for transmit and receive flows with default value"
@@ -141,9 +153,6 @@ impl IgbDevice {
         self.reg.write_32(RXPBS, 64);
         self.reg.write_32(TXPBS, 40);
         self.reg.write_32(SWPBS, 20);
-
-        self.reg
-            .modify_reg(|reg: CTRL_EXT| CTRL_EXT::DRV_LOAD | reg);
 
         Ok(())
     }

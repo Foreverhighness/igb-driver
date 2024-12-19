@@ -6,7 +6,8 @@ use crate::{
 };
 
 const PHY_CONTROL: u32 = 0;
-const MII_CR_POWER_DOWN: u16 = 0x0800;
+/// 8.25.1 PHY Control Register
+const MII_CR_RESTART_AUTO_NEGOTIATION: u16 = 1 << 9;
 
 pub struct Phy {
     reg: Reg,
@@ -15,10 +16,7 @@ pub struct Phy {
 
 impl Phy {
     pub fn new(reg: Reg) -> Self {
-        let mdic = reg.read_reg::<MDIC>();
-        let addr = (mdic.bits() & MDIC::PHYADD.bits()) >> 21;
-        debug!("phy addr: {}", addr);
-        Self { reg, addr }
+        Self { reg, addr: 1 }
     }
 
     pub fn read_mdic(&self, offset: u32) -> Result<u16, IgbError> {
@@ -64,7 +62,7 @@ impl Phy {
 
     pub fn power_up(&self) -> Result<(), IgbError> {
         let mut mii_reg = self.read_mdic(PHY_CONTROL)?;
-        mii_reg &= !MII_CR_POWER_DOWN;
+        mii_reg |= MII_CR_RESTART_AUTO_NEGOTIATION;
         self.write_mdic(PHY_CONTROL, mii_reg)
     }
 }
