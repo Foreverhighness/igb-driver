@@ -185,7 +185,6 @@ impl FlagReg for CTRL_EXT {
 
 bitflags! {
     pub struct RCTL: u32 {
-        const RST  = 0x00000001;        // Software reset
         const RXEN = 0x00000002;        // Receiver Enable. 0=disabled; 1=enabled
         const SBP  = 0x00000004;        // Store Bad Packets. 0=do not store; 1=store bad packets
         const UPE  = 0x00000008;        // Unicast Promiscuous Enabled. 0=disabled; 1=enabled
@@ -273,4 +272,32 @@ bitflags! {
 
 impl FlagReg for SwFwSync {
     const REG: u32 = 0x05B5C;
+}
+
+bitflags! {
+    pub struct RXDCTL: u32 {
+        const PTHRESH = 0b0001_1111;
+        const HTHRESH = 0b0001_1111 << 8;
+        const WTHRESH = 0b0001_1111 << 16;
+        const ENABLE = 1 << 25;
+        const SWFLUSH = 1 << 26; // Receive Software Flush.
+    }
+}
+
+impl FlagReg for RXDCTL {
+    const REG: u32 = 0x0C028;
+}
+
+bitflags! {
+    pub struct TXDCTL: u32 {
+        const PTHRESH = 0b0001_1111;
+        const HTHRESH = 0b0001_1111 << 8;
+        const WTHRESH = 0b0001_1111 << 16;
+        const ENABLE = 1 << 25;
+        const SWFLUSH = 1 << 26; // Receive Software Flush.
+    }
+}
+
+impl FlagReg for TXDCTL {
+    const REG: u32 = 0x0E028;
 }

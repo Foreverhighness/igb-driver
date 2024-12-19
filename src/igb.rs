@@ -51,9 +51,6 @@ impl IgbDevice {
         // 4.5.4 disable interrupts again after reset
         self.reg.disable_interrupts();
 
-        self.reg
-            .modify_reg(|reg: CTRL_EXT| CTRL_EXT::DRV_LOAD | reg);
-
         log::info!("Mac address: {:02X?}", self.reg.read_mac());
 
         // 4.5.5 Global Reset and General Configuration
@@ -62,6 +59,9 @@ impl IgbDevice {
         // 4.5.6 Flow Control Setup (skipped)
         // 4.5.7 Link Setup Mechanisms and Control/Status Bit Summary
         self.setup_phy_and_the_link()?;
+
+        self.reg
+            .modify_reg(|reg: CTRL_EXT| CTRL_EXT::DRV_LOAD | reg);
 
         log::info!("status: {:?}", self.status());
 
@@ -97,7 +97,7 @@ impl IgbDevice {
         // disable rx when configing.
         self.reg.write_reg(RCTL::empty());
 
-        self.rx_ring.init();
+        self.rx_ring.init_tx();
 
         self.reg.write_reg(RCTL::RXEN | RCTL::SZ_4096);
     }
@@ -105,7 +105,7 @@ impl IgbDevice {
     fn init_tx(&mut self) {
         self.reg.write_reg(TCTL::empty());
 
-        self.tx_ring.init();
+        self.tx_ring.init_rx();
 
         self.reg.write_reg(TCTL::EN);
     }

@@ -16,7 +16,7 @@ impl BaseDriverOps for IgbDevice {
 
 impl NetDriverOps for IgbDevice {
     fn mac_address(&self) -> EthernetAddress {
-        todo!()
+        EthernetAddress(self.mac())
     }
 
     fn can_transmit(&self) -> bool {
